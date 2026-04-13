@@ -56,6 +56,7 @@ psql -h localhost -U postgres -d vectordb -f scripts/seed_pgvector.sql
 
 ### Milvus
 ```bash
+cd vector-demo
 python scripts/milvus_test.py
 ```
 
@@ -94,15 +95,54 @@ Abre [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) en tu navegador.
   ```
 
 ### Pruebas en Milvus (Python)
-- Ejecuta el script:
-  ```bash
-  python scripts/milvus_test.py
-  ```
-- El script muestra:
-  - Inserción de documentos
-  - Consulta por id
-  - Búsqueda vectorial
-  - Eliminación y listado
+
+Puedes probar Milvus manualmente desde un intérprete Python interactivo:
+
+```bash
+cd vector-demo
+python
+```
+
+Y luego, en el prompt de Python:
+```python
+from pymilvus import connections, Collection
+connections.connect(host="localhost", port="19530")
+col = Collection("documentos_milvus_api")
+
+# Listar documentos
+docs = col.query("id != ''", output_fields=["id", "titulo", "contenido", "categoria", "embedding"])
+for d in docs:
+  print(d)
+
+# Buscar por similitud
+search_params = {"metric_type": "L2", "params": {"ef": 32}}
+results = col.search(
+  data=[[0.8,0.2,0.9,0.1]],
+  anns_field="embedding",
+  param=search_params,
+  limit=2,
+  output_fields=["id", "titulo", "contenido", "categoria", "embedding"]
+)
+for hits in results:
+  for hit in hits:
+    print(hit.entity)
+
+# Insertar un documento
+col.insert([
+  ["5"],
+  ["API REST con FastAPI"],
+  ["FastAPI permite crear APIs rápidas."],
+  ["FastAPI"],
+  [[0.5,0.5,0.5,0.5]]
+])
+col.flush()
+
+# Eliminar un documento
+col.delete("id == '5'")
+col.flush()
+```
+
+Esto te permite mostrar búsquedas, inserciones y eliminaciones en vivo, igual que con SQL pero usando Python.
 
 ---
 
