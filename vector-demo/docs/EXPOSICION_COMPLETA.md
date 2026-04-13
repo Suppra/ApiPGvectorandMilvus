@@ -96,48 +96,59 @@ Abre [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) en tu navegador.
 
 ### Pruebas en Milvus (Python)
 
-Puedes probar Milvus manualmente desde un intérprete Python interactivo:
+
+Puedes probar Milvus manualmente desde un intérprete Python interactivo. **Primero debes definir la conexión y la colección**:
 
 ```bash
 cd vector-demo
 python
 ```
 
-Y luego, en el prompt de Python:
+Y luego, en el prompt de Python, ejecuta estas líneas primero (¡imprescindible!):
 ```python
 from pymilvus import connections, Collection
 connections.connect(host="localhost", port="19530")
 col = Collection("documentos_milvus_api")
+```
+
+Ahora puedes ejecutar las siguientes operaciones:
 
 # Listar documentos
+```python
 docs = col.query("id != ''", output_fields=["id", "titulo", "contenido", "categoria", "embedding"])
 for d in docs:
-  print(d)
+    print(d)
+```
 
 # Buscar por similitud
+```python
 search_params = {"metric_type": "L2", "params": {"ef": 32}}
 results = col.search(
-  data=[[0.8,0.2,0.9,0.1]],
-  anns_field="embedding",
-  param=search_params,
-  limit=2,
-  output_fields=["id", "titulo", "contenido", "categoria", "embedding"]
+    data=[[0.8,0.2,0.9,0.1]],
+    anns_field="embedding",
+    param=search_params,
+    limit=2,
+    output_fields=["id", "titulo", "contenido", "categoria", "embedding"]
 )
 for hits in results:
-  for hit in hits:
-    print(hit.entity)
+    for hit in hits:
+        print(hit.entity)
+```
 
 # Insertar un documento
+```python
 col.insert([
-  ["5"],
-  ["API REST con FastAPI"],
-  ["FastAPI permite crear APIs rápidas."],
-  ["FastAPI"],
-  [[0.5,0.5,0.5,0.5]]
+    ["5"],
+    ["API REST con FastAPI"],
+    ["FastAPI permite crear APIs rápidas."],
+    ["FastAPI"],
+    [[0.5,0.5,0.5,0.5]]
 ])
 col.flush()
+```
 
 # Eliminar un documento
+```python
 col.delete("id == '5'")
 col.flush()
 ```
