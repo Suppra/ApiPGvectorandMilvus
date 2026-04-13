@@ -97,63 +97,76 @@ Abre [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) en tu navegador.
 ### Pruebas en Milvus (Python)
 
 
-Puedes probar Milvus manualmente desde un intérprete Python interactivo. **Primero debes definir la conexión y la colección**:
+#### Pruebas manuales con Milvus paso a paso
 
-```bash
-cd vector-demo
-python
-```
+Puedes interactuar con Milvus desde Python de forma manual, ideal para la exposición. Sigue estos pasos exactamente:
 
-Y luego, en el prompt de Python, ejecuta estas líneas primero (¡imprescindible!):
-```python
-from pymilvus import connections, Collection
-connections.connect(host="localhost", port="19530")
-col = Collection("documentos_milvus_api")
-```
+1. **Abre una terminal y entra a la carpeta del proyecto:**
+   ```bash
+   cd vector-demo
+   ```
 
-Ahora puedes ejecutar las siguientes operaciones:
+2. **Inicia el intérprete interactivo de Python:**
+   ```bash
+   python
+   ```
 
-# Listar documentos
-```python
-docs = col.query("id != ''", output_fields=["id", "titulo", "contenido", "categoria", "embedding"])
-for d in docs:
-    print(d)
-```
+3. **(¡IMPORTANTE!) Antes de cualquier consulta, debes importar y conectar:**
+   ```python
+   from pymilvus import connections, Collection
+   connections.connect(host="localhost", port="19530")
+   col = Collection("documentos_milvus_api")
+   ```
+   - Si olvidas esto, cualquier comando que use `col` dará error "name 'col' is not defined".
 
-# Buscar por similitud
-```python
-search_params = {"metric_type": "L2", "params": {"ef": 32}}
-results = col.search(
-    data=[[0.8,0.2,0.9,0.1]],
-    anns_field="embedding",
-    param=search_params,
-    limit=2,
-    output_fields=["id", "titulo", "contenido", "categoria", "embedding"]
-)
-for hits in results:
-    for hit in hits:
-        print(hit.entity)
-```
+4. **Listar todos los documentos:**
+   ```python
+   docs = col.query("id != ''", output_fields=["id", "titulo", "contenido", "categoria", "embedding"])
+   for d in docs:
+     print(d)
+   ```
 
-# Insertar un documento
-```python
-col.insert([
-    ["5"],
-    ["API REST con FastAPI"],
-    ["FastAPI permite crear APIs rápidas."],
-    ["FastAPI"],
-    [[0.5,0.5,0.5,0.5]]
-])
-col.flush()
-```
+5. **Buscar por similitud vectorial:**
+   ```python
+   search_params = {"metric_type": "L2", "params": {"ef": 32}}
+   results = col.search(
+     data=[[0.8,0.2,0.9,0.1]],
+     anns_field="embedding",
+     param=search_params,
+     limit=2,
+     output_fields=["id", "titulo", "contenido", "categoria", "embedding"]
+   )
+   for hits in results:
+     for hit in hits:
+       print(hit.entity)
+   ```
 
-# Eliminar un documento
-```python
-col.delete("id == '5'")
-col.flush()
-```
+6. **Insertar un documento nuevo:**
+   ```python
+   col.insert([
+     ["5"],
+     ["API REST con FastAPI"],
+     ["FastAPI permite crear APIs rápidas."],
+     ["FastAPI"],
+     [[0.5,0.5,0.5,0.5]]
+   ])
+   col.flush()
+   ```
 
-Esto te permite mostrar búsquedas, inserciones y eliminaciones en vivo, igual que con SQL pero usando Python.
+7. **Eliminar un documento:**
+   ```python
+   col.delete("id == '5'")
+   col.flush()
+   ```
+
+---
+**Tips y advertencias:**
+- Siempre ejecuta primero la conexión y la creación de la colección (`col = Collection(...)`).
+- Si cierras el intérprete o abres uno nuevo, repite el paso 3 antes de cualquier consulta.
+- Si ves errores como `name 'col' is not defined`, es porque olvidaste definir la colección.
+- Puedes repetir los pasos 4-7 cuantas veces quieras para mostrar búsquedas, inserciones y eliminaciones en vivo.
+
+Esto te permite demostrar el uso de Milvus de forma clara y sin errores en la exposición.
 
 ---
 
