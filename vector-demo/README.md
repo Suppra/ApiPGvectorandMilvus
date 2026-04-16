@@ -2,7 +2,34 @@
 
 Proyecto académico para comparar dos motores vectoriales: **pgvector** (PostgreSQL) y **Milvus**. Incluye instalación, API REST CRUD con FastAPI, documentación Swagger, consultas directas y scripts de prueba para exposición universitaria.
 
-## Objetivos
+---
+
+## 🚀 INICIO RÁPIDO - EXPOSICIÓN (3 MINUTOS)
+
+```bash
+# 1️⃣ Verificar que todo está listo (1 minuto)
+python scripts/demo_startup.py
+
+# 2️⃣ Iniciar contenedores (30 segundos)
+docker-compose -f docker-compose.pgvector.yml up -d
+docker-compose -f docker-compose.milvus.yml up -d
+
+# 3️⃣ Iniciar API (20 segundos)
+uvicorn app.main:app --reload
+
+# 4️⃣ Abrir DEMO (elige una)
+python scripts/demo_comparison.py      # 🎮 Demo interactiva (RECOMENDADO)
+# O
+# http://127.0.0.1:8000/docs           # 🌐 Swagger UI profesional
+# O
+# python scripts/performance_test.py   # 📊 Análisis de rendimiento
+```
+
+**Leer primero**: [INICIO_RAPIDO.md](INICIO_RAPIDO.md)
+
+---
+
+## 📚 Documentación para Exposición
 
 - Demostrar instalación y uso de pgvector y Milvus en local.
 - Exponer una API REST CRUD y búsqueda vectorial para ambos motores.
@@ -43,16 +70,60 @@ Proyecto académico para comparar dos motores vectoriales: **pgvector** (Postgre
    ```bash
    docker-compose -f docker-compose.milvus.yml up -d
    ```
-6. Inicializa datos de ejemplo:
-   ```bash
-   psql -h localhost -U postgres -d vectordb -f scripts/seed_pgvector.sql
-   python scripts/milvus_test.py
-   ```
-7. Corre la API:
+6. Corre la API:
    ```bash
    uvicorn app.main:app --reload
    ```
-8. Abre Swagger en [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+7. Abre Swagger en [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+## Scripts para la Exposición
+
+### 🚀 Verificación rápida de startup
+Antes de empezar la exposición, verifica que todo está listo:
+```bash
+python scripts/demo_startup.py
+```
+Muestra estado de Docker, contenedores, bases de datos y API.
+
+### 🎮 Demo interactiva comparativa
+Menú interactivo para comparar ambos motores en tiempo real:
+```bash
+python scripts/demo_comparison.py
+```
+Opciones:
+- Crear documentos de prueba
+- Listar documentos en ambos motores
+- Realizar búsquedas vectoriales y comparar tiempos
+- Actualizar/eliminar documentos
+- Hacer búsquedas personalizadas
+
+### 📊 Pruebas de rendimiento
+Análisis profundo de rendimiento y escalabilidad:
+```bash
+python scripts/performance_test.py
+```
+Opciones:
+- Crear 50+ documentos en bulk
+- Realizar búsquedas consecutivas con métricas
+- Comparar tiempos de respuesta
+- Generar gráficos de rendimiento
+
+### 🚀 Script PowerShell de inicio rápido (Windows)
+```powershell
+.\scripts\start_demo.ps1
+```
+Menú para iniciar contenedores, API y demo en mismo comando.
+
+## 📋 Guía de Exposición
+
+Para una presentación paso a paso, consulta:
+[Guía completa de exposición](docs/GUIA_EXPOSICION.md)
+
+Incluye:
+- Checklist pre-exposición
+- Instrucciones Swagger
+- Guión sugerido (20 minutos)
+- Troubleshooting rápido
 
 ## Errores comunes antes de exponer
 
